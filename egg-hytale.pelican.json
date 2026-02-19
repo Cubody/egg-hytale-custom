@@ -131,7 +131,7 @@
                 "string"
             ],
             "sort": 27
-        }
+        },
         {
             "name": "Boot Commands",
             "description": "Comma-separated commands to run on server start (executed synchronously in order)",
