@@ -120,6 +120,19 @@
             "sort": 7
         },
         {
+            "name": "Server JAR",
+            "description": "The server JAR file to run",
+            "env_variable": "SERVER_JAR",
+            "default_value": "HytaleServer.jar",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": 27
+        }
+        {
             "name": "Boot Commands",
             "description": "Comma-separated commands to run on server start (executed synchronously in order)",
             "env_variable": "BOOT_COMMANDS",
