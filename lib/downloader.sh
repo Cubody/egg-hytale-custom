@@ -99,6 +99,9 @@ run_auto_update() {
     # Run automatic update if enabled
     logger info "Checking for updates..."
 
+    # First, update the downloader itself so it knows about the latest game version
+    $DOWNLOADER -check-update
+
     local LOCAL_VERSION=""
     if [ -f "$VERSION_FILE" ]; then
         LOCAL_VERSION=$(cat $VERSION_FILE)
@@ -106,30 +109,30 @@ run_auto_update() {
         logger warn "Version file not found, forcing update"
     fi
 
-    local DOWNLOADER_VERSION=$($DOWNLOADER -print-version -skip-update-check 2>&1)
+    # -print-version returns the GAME version, not the downloader version
+    local GAME_VERSION=$($DOWNLOADER -print-version -skip-update-check 2>&1)
 
-    if [ $? -ne 0 ] || [ -z "$DOWNLOADER_VERSION" ]; then
-        logger error "Failed to get downloader version."
+    if [ $? -ne 0 ] || [ -z "$GAME_VERSION" ]; then
+        logger error "Failed to get game version."
         exit 1
+    fi
+
+    if [ -n "$LOCAL_VERSION" ]; then
+        logger info "Local version: $LOCAL_VERSION"
+    fi
+    logger info "Latest version: $GAME_VERSION"
+
+    if [ "$LOCAL_VERSION" != "$GAME_VERSION" ]; then
+        logger warn "Version mismatch, downloading update..."
+        $DOWNLOADER -patchline $PATCHLINE -download-path server.zip
+
+        save_patchline_version
+        save_downloader_version
+
+        extract_server_files
+        logger success "Server has been updated successfully!"
     else
-        if [ -n "$LOCAL_VERSION" ]; then
-            logger info "Local version: $LOCAL_VERSION"
-        fi
-        logger info "Downloader version: $DOWNLOADER_VERSION"
-
-        if [ "$LOCAL_VERSION" != "$DOWNLOADER_VERSION" ]; then
-            logger warn "Version mismatch, running update..."
-            $DOWNLOADER -check-update
-            $DOWNLOADER -patchline $PATCHLINE -download-path server.zip
-
-            save_patchline_version
-            save_downloader_version
-
-            extract_server_files
-            logger success "Server has been updated successfully!"
-        else
-            logger info "Versions match, skipping update"
-        fi
+        logger info "Server is up to date"
     fi
 }
 
