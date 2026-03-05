@@ -1,6 +1,7 @@
 name: Publish
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
 
@@ -11,7 +12,8 @@ env:
 jobs:
   publish:
     name: Build and publish Docker Image
-    runs-on: ubuntu-latest
+    runs-on:
+  workflow_dispatch: ubuntu-latest
     permissions:
       contents: write
       packages: write
