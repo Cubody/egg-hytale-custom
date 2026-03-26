@@ -110,7 +110,7 @@ run_auto_update() {
     fi
 
     # -print-version returns the GAME version, not the downloader version
-    local GAME_VERSION=$($DOWNLOADER -print-version -skip-update-check 2>&1)
+    local GAME_VERSION=$($DOWNLOADER -patchline $PATCHLINE -print-version -skip-update-check 2>&1)
 
     if [ $? -ne 0 ] || [ -z "$GAME_VERSION" ]; then
         logger error "Failed to get game version."
